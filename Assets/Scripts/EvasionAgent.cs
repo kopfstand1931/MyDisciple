@@ -12,6 +12,8 @@ public class EvasionAgent : Agent
     [SerializeField] private SpriteRenderer floorMeshRenderer;
     private BufferSensorComponent evasion_BufferSensor;
 
+    private Rigidbody2D agent_Rigid2D;  
+
     private float max_RecogRange = 8f;
     private float RecogRangeSquared;
 
@@ -19,6 +21,7 @@ public class EvasionAgent : Agent
     {
         evasion_BufferSensor = GetComponent<BufferSensorComponent>();
         RecogRangeSquared = Mathf.Pow(max_RecogRange, 2f);
+        agent_Rigid2D = GetComponent<Rigidbody2D>();
     }
 
     public override void OnEpisodeBegin()
@@ -103,7 +106,9 @@ public class EvasionAgent : Agent
         float moveY = actions.ContinuousActions[1];
 
         float moveSpeed = 5f;
-        transform.localPosition += new Vector3(moveX, moveY, 0) * Time.deltaTime * moveSpeed;
+
+        // transform.localPosition += new Vector3(moveX, moveY, 0) * Time.deltaTime * moveSpeed;
+        agent_Rigid2D.velocity = new Vector3(moveX, moveY, 0) * moveSpeed;
 
         AddReward(0.0001f);
     }
