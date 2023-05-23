@@ -25,7 +25,7 @@ behaviors:
           hidden_units: 32
           num_layers: 2
       gail:
-        strength: 0.1
+        strength: 0.5
         demo_path: MasterArts/MartialMaster.demo
         network_settings:
           normalize: True

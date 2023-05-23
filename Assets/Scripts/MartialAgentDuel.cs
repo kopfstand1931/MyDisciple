@@ -5,6 +5,10 @@ using UnityEngine;
 using SimpleFileBrowser;
 using Unity.MLAgents.Policies;
 using Unity.MLAgents;
+using System;
+using Unity.Barracuda.ONNX;
+using Unity.VisualScripting.FullSerializer.Internal.Converters;
+using UnityEditor;
 
 public class MartialAgentDuel : MartialAgent
 {
@@ -13,12 +17,14 @@ public class MartialAgentDuel : MartialAgent
     public string modelFilePath;
     string defaultPath = "results/";
     public NNModel m_model;
+    private Model m_RuntimeModel;
 
 
     void Start()
     {
         transform.GetChild(0).gameObject.SetActive(false);
         transform.parent.GetChild(2).gameObject.SetActive(false);
+        transform.GetChild(1).gameObject.SetActive(false);
 
         StartCoroutine(SelectFilePath());
         
@@ -42,16 +48,24 @@ public class MartialAgentDuel : MartialAgent
         {
             // Load the model
             byte[] modelBytes = File.ReadAllBytes(modelFilePath);
-            var modelData = ScriptableObject.CreateInstance<NNModelData>();
-            modelData.Value = modelBytes;
 
             m_model = ScriptableObject.CreateInstance<NNModel>();
-            m_model.modelData = modelData;
+            m_model.modelData = ScriptableObject.CreateInstance<NNModelData>();
+            m_model.modelData.Value = modelBytes;
+            m_model.modelData.name = "Martial";
+
+            modelFilePath = "results/Martial.onnx";
+
+            m_model = (Unity.Barracuda.NNModel)AssetDatabase.LoadAssetAtPath(modelFilePath, typeof(Unity.Barracuda.NNModel));
+
+            
+
 
             transform.GetChild(0).gameObject.SetActive(true);
             transform.parent.GetChild(2).gameObject.SetActive(true);
+            transform.GetChild(1).gameObject.SetActive(true);
 
-            base.SetModel("Martial", m_model, InferenceDevice.CPU);
+            // base.SetModel("Martial", m_model, InferenceDevice.CPU);
         }
     }
 
