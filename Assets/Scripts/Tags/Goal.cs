@@ -56,6 +56,8 @@ public class Goal : MonoBehaviour
                 Instantiate(bullet, this.transform.position,
                 Quaternion.identity, this.transform.parent) as GameObject;
             newBullet.GetComponent<Rigidbody2D>().velocity = dirToTarget * bulletSpeed;
+            float angle = Mathf.Atan2(dirToTarget.y, dirToTarget.x) * Mathf.Rad2Deg;
+            newBullet.transform.rotation = Quaternion.Euler(0f, 0f, angle);
         }
         
     }

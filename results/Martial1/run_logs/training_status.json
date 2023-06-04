@@ -1,0 +1,29 @@
+{
+    "Martial": {
+        "checkpoints": [
+            {
+                "steps": 3109,
+                "file_path": "results\\Martial1\\Martial\\Martial-3109.onnx",
+                "reward": null,
+                "creation_time": 1685901478.5922832,
+                "auxillary_file_paths": [
+                    "results\\Martial1\\Martial\\Martial-3109.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 3109,
+            "file_path": "results\\Martial1\\Martial.onnx",
+            "reward": null,
+            "creation_time": 1685901478.5922832,
+            "auxillary_file_paths": [
+                "results\\Martial1\\Martial\\Martial-3109.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "0.30.0",
+        "torch_version": "1.7.1+cu110"
+    }
+}

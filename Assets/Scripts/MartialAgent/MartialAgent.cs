@@ -19,10 +19,16 @@ public class MartialAgent : Agent
     private SpriteRenderer agent_Renderer;
 
     [SerializeField] private TextMeshProUGUI agentHPUITMP;
-    [SerializeField] private int agent_maxHP = 5;
+    [SerializeField] private int agent_maxHP = 13;
     private int agent_currentHP;
 
     [SerializeField] private float moveSpeed = 5f;
+
+    [SerializeField] private GameObject bulletPrefab;
+
+    private AnimationController m_animator;
+
+    private bool isInvincible = false;
 
     private struct BulletData // bullet data for buffer sensor
     {
@@ -45,6 +51,13 @@ public class MartialAgent : Agent
 
     VectorSensorComponent m_GoalSensor;
 
+    private bool isHit = false;
+    public bool IsHit
+    {
+        get { return isHit; }
+        set { isHit = value; }
+    }
+
     public enum MartialGoal
     {
         Evasion,
@@ -62,13 +75,13 @@ public class MartialAgent : Agent
             switch (value)
             {
                 case MartialGoal.Evasion:
-                    agent_Renderer.color = Color.magenta;
+                    agent_Renderer.color = new Color(1, 0, 1, 0.3f);
                     break;
                 case MartialGoal.Approach:
-                    agent_Renderer.color = Color.blue;
+                    agent_Renderer.color = new Color(0, 0, 1, 0.3f);
                     break;
                 case MartialGoal.Melee:
-                    agent_Renderer.color = Color.green;
+                    agent_Renderer.color = new Color(0, 1, 0, 0.3f);
                     break;
             }
             m_CurrentGoal = value;
@@ -82,46 +95,63 @@ public class MartialAgent : Agent
         agent_Rigid2D = GetComponent<Rigidbody2D>();
         agent_Renderer = GetComponentInChildren<SpriteRenderer>();
         m_GoalSensor = GetComponent<VectorSensorComponent>();
+        m_animator = GetComponentInChildren<AnimationController>();
 
+        // 내 환경 내 모든 에이전트의 체력 초기화.
+        MartialAgent[] environmentAgents = transform.parent.GetComponentsInChildren<MartialAgent>();
+        foreach (MartialAgent obj in environmentAgents)
+        {
+            obj.InitializeHP();
+        }
+    }
+
+    public void InitializeHP()
+    {
+        // restore all HP
         agent_currentHP = agent_maxHP;
+        IsHit = false;
     }
 
     public void Update()
     {  // Death Check
         if (agent_currentHP <= 0)
             AgentDie();
+        
+
+        // Hit Check
+        if (IsHit)
+        {
+            // HitByMelee
+            HitByMelee();
+        }
+
+        // Direction Check
+        Vector3 dirToTarget = (targetTransform.localPosition - transform.localPosition).normalized;
+        if (dirToTarget.x > 0)
+            m_animator.IsRight = true;
+        else
+            m_animator.IsRight = false;
+
         UpdateHPUI();
+
     }
 
     public override void OnEpisodeBegin()
     {
-        // restore all HP
-        agent_currentHP = agent_maxHP;
+        
+        // 내 환경 내 모든 에이전트의 체력 초기화.
+        MartialAgent[] environmentAgents = transform.parent.GetComponentsInChildren<MartialAgent>();
+        foreach (MartialAgent obj in environmentAgents)
+        {
+            obj.InitializeHP();
+        }
 
         // Destory any bullets remain on environment
         DestroyAllProjectiles();
 
         // check Goal
         UpdateBulletObjects();
-        if (m_GoalSensor is object)
-        {
-            if (bulletObjects.Count == 0)  // 발사된 투사체가 발견되지 않았다면
-            {
-                float _disToTarget = (targetTransform.localPosition - transform.localPosition).sqrMagnitude;  // 목표와의 거리 계산
-                if (_disToTarget < 2.25f)  // 거리가 1.5 이하면 근접공격
-                    CurrentGoal = MartialGoal.Melee;
-                else  // 그렇지 않다면 접근
-                    CurrentGoal = MartialGoal.Approach;
-            }
-            else 
-            {  // 투사체가 발견되었다면 회피
-                CurrentGoal = MartialGoal.Evasion;
-            }
-        }
-        else
-        {
-            CurrentGoal = MartialGoal.Evasion;
-        }
+        CheckGoal();
 
         // relocate agent and goal randomly
         transform.localPosition = new Vector3(UnityEngine.Random.Range(-8f, 3f), UnityEngine.Random.Range(-8f, 3f), 0);
@@ -132,25 +162,7 @@ public class MartialAgent : Agent
     {
         // Check Goal
         UpdateBulletObjects();
-        if (m_GoalSensor is object)
-        {
-            if (bulletObjects.Count == 0)  // 발사된 투사체가 발견되지 않았다면
-            {
-                float _disToTarget = (targetTransform.localPosition - transform.localPosition).sqrMagnitude;  // 목표와의 거리 계산
-                if (_disToTarget < 2.25f)  // 거리가 1.5 이하면 근접공격
-                    CurrentGoal = MartialGoal.Melee;
-                else  // 그렇지 않다면 접근
-                    CurrentGoal = MartialGoal.Approach;
-            }
-            else
-            {  // 투사체가 발견되었다면 회피
-                CurrentGoal = MartialGoal.Evasion;
-            }
-        }
-        else
-        {
-            CurrentGoal = MartialGoal.Evasion;
-        }
+        CheckGoal();
 
         Array values = Enum.GetValues(typeof(MartialGoal));
         if (m_GoalSensor is object)
@@ -183,16 +195,51 @@ public class MartialAgent : Agent
     public override void OnActionReceived(ActionBuffers actions)
     {
         if (m_CurrentGoal == MartialGoal.Melee)  // 근접 전투 상황일 시에
-        {   // 공격 동작을 시도했다면 승리
+        {   // 공격 동작을 시도했다면 공격
             bool isTryToAttack = actions.DiscreteActions[2] == 1;
             if (isTryToAttack)
             {
-                AgentWin();
+                m_animator.SetCurrentState(3);
+                MartialAgent _target;
+                if(_target = targetTransform.GetComponent<MartialAgent>())  // 현재 대전씬이고 타겟이 에이전트인 경우
+                {
+                    _target.IsHit = true;
+                    AddReward(+0.3f);
+                }
+                else  // 현재 학습씬인 경우 
+                {
+                    AgentWin();
+                }
             }
         }
 
         // 그 이외의 상황에
         // 이동
+        // 접근 중 투사 공격
+        
+        if (m_CurrentGoal == MartialGoal.Approach)
+        {
+            float _disToTarget = (targetTransform.localPosition - transform.localPosition).sqrMagnitude;  // 목표와의 거리 계산
+            if (_disToTarget > 9f)  // 거리가 3 이상일 시 투사공격
+            {
+                bool isTryToShot = actions.DiscreteActions[3] == 1;
+                if (isTryToShot)
+                {
+                    m_animator.SetCurrentState(4);
+                    StartCoroutine("MakeTemporalInvincible");
+                    
+                    float bulletSpeed = 10f;
+                    Vector3 dirToTarget = (targetTransform.localPosition - this.transform.localPosition).normalized;
+                    GameObject newBullet =
+                        Instantiate(bulletPrefab, this.transform.position,
+                        Quaternion.identity, this.transform.parent) as GameObject;
+                    newBullet.GetComponent<Rigidbody2D>().velocity = dirToTarget * bulletSpeed;
+                    float angle = Mathf.Atan2(dirToTarget.y, dirToTarget.x) * Mathf.Rad2Deg;
+                    newBullet.transform.rotation = Quaternion.Euler(0f, 0f, angle);
+                }
+            }
+        }
+        
 
         int moveX = actions.DiscreteActions[0];  // 0 = Don't Move; 1 = Left; 2 = Right
         int moveY = actions.DiscreteActions[1];  // 0 = Don't Move; 1 = Back; 2 = Forward;
@@ -264,6 +311,7 @@ public class MartialAgent : Agent
         }
 
         discreteActions[2] = Input.GetKey(KeyCode.Space) ? 1 : 0;  // 공격 동작 입력
+        discreteActions[3] = Input.GetKey(KeyCode.V) ? 1 : 0;  // S키로 투사 공격
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -289,8 +337,9 @@ public class MartialAgent : Agent
 
         
         // Lose : Shot by Bullet
-        if (collision.TryGetComponent<Bullet>(out Bullet bullet))
+        if (collision.TryGetComponent<Bullet>(out Bullet bullet) && (!isInvincible))
         {
+            m_animator.SetCurrentState(2);
             Destroy(bullet.gameObject);
             StartCoroutine(OnHitColoring(Color.red));
             agent_currentHP -= 1;
@@ -363,6 +412,13 @@ public class MartialAgent : Agent
         agent_Renderer.color = _color;
     }
 
+    private IEnumerator MakeTemporalInvincible()
+    {
+        isInvincible = true;
+        yield return new WaitForSeconds(1.0f);
+        isInvincible = false;
+    }
+
     private void UpdateHPUI()
     {
         agentHPUITMP.text = $"{agent_currentHP} / {agent_maxHP}";
@@ -370,6 +426,7 @@ public class MartialAgent : Agent
 
     private void AgentDie()  // Handling Death 
     {
+        m_animator.SetCurrentState(5);
         SetReward(-1f);
         StartCoroutine(ResultColoring(new Color(0.7f, 0.3f, 0.3f, 0.5f)));
         EndEpisode();
@@ -380,5 +437,47 @@ public class MartialAgent : Agent
         AddReward(+1f * (agent_currentHP / agent_maxHP));  // agent의 체력 잔량에 비례한 리워드를 받는다.
         StartCoroutine(ResultColoring(new Color(0.3f, 0.7f, 0.3f, 0.5f)));
         EndEpisode();
+    }
+
+    private void CheckGoal()
+    {
+        // check Goal
+        if (m_GoalSensor is object)
+        {
+            if (bulletObjects.Count == 0)  // 발사된 투사체가 발견되지 않았다면
+            {
+                float _disToTarget = (targetTransform.localPosition - transform.localPosition).sqrMagnitude;  // 목표와의 거리 계산
+                if (_disToTarget < 2.25f)  // 거리가 1.5 이하면 근접공격
+                {
+                    CurrentGoal = MartialGoal.Melee;
+                    m_animator.SetCurrentState(0);
+                }
+                else  // 그렇지 않다면 접근
+                {
+                    CurrentGoal = MartialGoal.Approach;
+                    m_animator.SetCurrentState(1);
+                }
+            }
+            else
+            {  // 투사체가 발견되었다면 회피
+                CurrentGoal = MartialGoal.Evasion;
+            }
+        }
+        else
+        {
+            CurrentGoal = MartialGoal.Evasion;
+        }
+    }
+
+    private void HitByMelee()
+    {
+        // HitByMelee
+        IsHit = false;
+        agent_currentHP -= 2;
+        // 넉백
+        Vector3 dirToTarget = (targetTransform.localPosition - transform.localPosition).normalized;
+        dirToTarget = -dirToTarget;
+        transform.localPosition += dirToTarget * 1.1f;
+        m_animator.SetCurrentState(2);
     }
 }
