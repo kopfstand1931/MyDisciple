@@ -7,6 +7,7 @@ using Unity.MLAgents.Actuators;
 using Unity.MLAgents.Sensors;
 using System.Linq;
 using TMPro;
+using Unity.Barracuda;
 
 public class MartialAgent : Agent
 {
@@ -88,6 +89,10 @@ public class MartialAgent : Agent
         }
     }
 
+    // AnimationController에 전달할 값 Observing
+    private int currentAnimationState = 0;
+    private int nextAnimationState = 0;
+
     public override void Initialize()
     {
         evasion_BufferSensor = GetComponent<BufferSensorComponent>();
@@ -98,11 +103,10 @@ public class MartialAgent : Agent
         m_animator = GetComponentInChildren<AnimationController>();
 
         // 내 환경 내 모든 에이전트의 체력 초기화.
-        MartialAgent[] environmentAgents = transform.parent.GetComponentsInChildren<MartialAgent>();
-        foreach (MartialAgent obj in environmentAgents)
-        {
-            obj.InitializeHP();
-        }
+        MartialAgent _target;
+        if (_target = targetTransform.GetComponent<MartialAgent>())
+            _target.InitializeHP();
+        InitializeHP();  // 내 체력 초기화.
     }
 
     public void InitializeHP()
@@ -112,6 +116,7 @@ public class MartialAgent : Agent
         IsHit = false;
     }
 
+    // Update 함수
     public void Update()
     {  // Death Check
         if (agent_currentHP <= 0)
@@ -132,22 +137,34 @@ public class MartialAgent : Agent
         else
             m_animator.IsRight = false;
 
+        // 상태가 변화한 경우에만 Animation 반영
+        if (nextAnimationState != currentAnimationState)
+        {
+            // Only react when the status changes
+            m_animator.SetCurrentState(nextAnimationState);
+        }
+        currentAnimationState = nextAnimationState;
+
+        // HP UI 갱신
         UpdateHPUI();
 
     }
 
     public override void OnEpisodeBegin()
     {
-        
-        // 내 환경 내 모든 에이전트의 체력 초기화.
-        MartialAgent[] environmentAgents = transform.parent.GetComponentsInChildren<MartialAgent>();
-        foreach (MartialAgent obj in environmentAgents)
-        {
-            obj.InitializeHP();
-        }
 
-        // Destory any bullets remain on environment
-        DestroyAllProjectiles();
+        // 내 환경 내 모든 에이전트의 체력 초기화.
+        MartialAgent _target;
+        if (_target = targetTransform.GetComponent<MartialAgent>())
+            _target.InitializeHP();
+        InitializeHP();  // 내 체력 초기화.
+
+        // Animation 초기화
+        currentAnimationState = 0;
+        nextAnimationState = 0;
+
+    // Destory any bullets remain on environment
+    DestroyAllProjectiles();
 
         // check Goal
         UpdateBulletObjects();
@@ -199,7 +216,7 @@ public class MartialAgent : Agent
             bool isTryToAttack = actions.DiscreteActions[2] == 1;
             if (isTryToAttack)
             {
-                m_animator.SetCurrentState(3);
+                nextAnimationState = 3;
                 MartialAgent _target;
                 if(_target = targetTransform.GetComponent<MartialAgent>())  // 현재 대전씬이고 타겟이 에이전트인 경우
                 {
@@ -220,12 +237,12 @@ public class MartialAgent : Agent
         if (m_CurrentGoal == MartialGoal.Approach)
         {
             float _disToTarget = (targetTransform.localPosition - transform.localPosition).sqrMagnitude;  // 목표와의 거리 계산
-            if (_disToTarget > 9f)  // 거리가 3 이상일 시 투사공격
+            if (_disToTarget > 12.25f)  // 거리가 3.5 이상일 시 투사공격
             {
                 bool isTryToShot = actions.DiscreteActions[3] == 1;
                 if (isTryToShot)
                 {
-                    m_animator.SetCurrentState(4);
+                    nextAnimationState = 4;
                     StartCoroutine("MakeTemporalInvincible");
                     
                     float bulletSpeed = 10f;
@@ -339,7 +356,7 @@ public class MartialAgent : Agent
         // Lose : Shot by Bullet
         if (collision.TryGetComponent<Bullet>(out Bullet bullet) && (!isInvincible))
         {
-            m_animator.SetCurrentState(2);
+            nextAnimationState = 2;
             Destroy(bullet.gameObject);
             StartCoroutine(OnHitColoring(Color.red));
             agent_currentHP -= 1;
@@ -426,7 +443,7 @@ public class MartialAgent : Agent
 
     private void AgentDie()  // Handling Death 
     {
-        m_animator.SetCurrentState(5);
+        nextAnimationState = 5;
         SetReward(-1f);
         StartCoroutine(ResultColoring(new Color(0.7f, 0.3f, 0.3f, 0.5f)));
         EndEpisode();
@@ -450,12 +467,12 @@ public class MartialAgent : Agent
                 if (_disToTarget < 2.25f)  // 거리가 1.5 이하면 근접공격
                 {
                     CurrentGoal = MartialGoal.Melee;
-                    m_animator.SetCurrentState(0);
+                    nextAnimationState = 0;
                 }
                 else  // 그렇지 않다면 접근
                 {
                     CurrentGoal = MartialGoal.Approach;
-                    m_animator.SetCurrentState(1);
+                    nextAnimationState = 1;
                 }
             }
             else
@@ -478,6 +495,6 @@ public class MartialAgent : Agent
         Vector3 dirToTarget = (targetTransform.localPosition - transform.localPosition).normalized;
         dirToTarget = -dirToTarget;
         transform.localPosition += dirToTarget * 1.1f;
-        m_animator.SetCurrentState(2);
+        nextAnimationState = 2;
     }
 }
