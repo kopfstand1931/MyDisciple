@@ -163,8 +163,8 @@ public class MartialAgent : Agent
         currentAnimationState = 0;
         nextAnimationState = 0;
 
-    // Destory any bullets remain on environment
-    DestroyAllProjectiles();
+        // Destory any bullets remain on environment
+        DestroyAllProjectiles();
 
         // check Goal
         UpdateBulletObjects();

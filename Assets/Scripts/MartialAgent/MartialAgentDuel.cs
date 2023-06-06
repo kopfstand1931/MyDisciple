@@ -43,6 +43,7 @@ public class MartialAgentDuel : MartialAgent
         yield return FileBrowser.WaitForLoadDialog(0, false, defaultPath, "Open ONNX Model", "Select");
         modelFilePath = FileBrowser.Result[0];
 
+        /*
         // Check if a file was selected
         if (modelFilePath.Length > 0)
         {
@@ -67,6 +68,7 @@ public class MartialAgentDuel : MartialAgent
 
             // base.SetModel("Martial", m_model, InferenceDevice.CPU);
         }
+        */
     }
 
 }

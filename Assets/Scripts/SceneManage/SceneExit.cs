@@ -21,7 +21,13 @@ public class SceneExit : MonoBehaviour
                 #endif
             }
             Academy.Instance.Dispose();
-            SceneManager.LoadScene("Title");
+
+            if (SceneManager.GetActiveScene().name == "Duel2MartialMvM")
+                SceneManager.LoadScene("Duel2MartialMvS");
+            else if (SceneManager.GetActiveScene().name == "Duel2MartialMvS")
+                SceneManager.LoadScene("Duel2MartialSvS");
+            else
+                SceneManager.LoadScene("Title");
         }
     }
 }
