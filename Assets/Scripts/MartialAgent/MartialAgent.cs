@@ -8,6 +8,7 @@ using Unity.MLAgents.Sensors;
 using System.Linq;
 using TMPro;
 using Unity.Barracuda;
+using UnityEngine.UI;
 
 public class MartialAgent : Agent
 {
@@ -15,10 +16,13 @@ public class MartialAgent : Agent
     [SerializeField] private SpriteRenderer floorMeshRenderer;
 
     private BufferSensorComponent evasion_BufferSensor;
+    
+    private SoundEffectPlayer m_soundEffectPlayer;
 
     private Rigidbody2D agent_Rigid2D;
     private SpriteRenderer agent_Renderer;
 
+    [SerializeField] private Image agentHPUIIMG;
     [SerializeField] private TextMeshProUGUI agentHPUITMP;
     [SerializeField] private int agent_maxHP = 13;
     private int agent_currentHP;
@@ -101,6 +105,7 @@ public class MartialAgent : Agent
         agent_Renderer = GetComponentInChildren<SpriteRenderer>();
         m_GoalSensor = GetComponent<VectorSensorComponent>();
         m_animator = GetComponentInChildren<AnimationController>();
+        m_soundEffectPlayer = GetComponent<SoundEffectPlayer>();
 
         // 내 환경 내 모든 에이전트의 체력 초기화.
         MartialAgent _target;
@@ -216,6 +221,10 @@ public class MartialAgent : Agent
             bool isTryToAttack = actions.DiscreteActions[2] == 1;
             if (isTryToAttack)
             {
+                if (m_soundEffectPlayer is not null)
+                {
+                    m_soundEffectPlayer.PlaySfx1();
+                }
                 nextAnimationState = 3;
                 MartialAgent _target;
                 if(_target = targetTransform.GetComponent<MartialAgent>())  // 현재 대전씬이고 타겟이 에이전트인 경우
@@ -227,6 +236,7 @@ public class MartialAgent : Agent
                 {
                     AgentWin();
                 }
+                
             }
         }
 
@@ -242,6 +252,10 @@ public class MartialAgent : Agent
                 bool isTryToShot = actions.DiscreteActions[3] == 1;
                 if (isTryToShot)
                 {
+                    if (m_soundEffectPlayer is not null)
+                    {
+                        m_soundEffectPlayer.PlaySfx2();
+                    }
                     nextAnimationState = 4;
                     StartCoroutine("MakeTemporalInvincible");
                     
@@ -439,6 +453,7 @@ public class MartialAgent : Agent
     private void UpdateHPUI()
     {
         agentHPUITMP.text = $"{agent_currentHP} / {agent_maxHP}";
+        agentHPUIIMG.fillAmount = (float)agent_currentHP / (float)agent_maxHP;
     }
 
     private void AgentDie()  // Handling Death 
@@ -497,4 +512,5 @@ public class MartialAgent : Agent
         transform.localPosition += dirToTarget * 1.1f;
         nextAnimationState = 2;
     }
+
 }

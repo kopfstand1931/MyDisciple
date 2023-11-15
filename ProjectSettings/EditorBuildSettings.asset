@@ -9,22 +9,19 @@ EditorBuildSettings:
     path: Assets/Scenes/Title.unity
     guid: 44c667d2cf7d4af43aa2f4de5d20803b
   - enabled: 1
-    path: Assets/Scenes/Education.unity
-    guid: 77c8d4750c35ef740b846d8525df3508
-  - enabled: 1
-    path: Assets/Scenes/Edu1Evasion.unity
+    path: Assets/Scenes/EditorOnly/Edu1Evasion.unity
     guid: b51630e4bc1c9ba429195d840cac27b3
   - enabled: 1
-    path: Assets/Scenes/Train1Evasion.unity
+    path: Assets/Scenes/EditorOnly/Train1Evasion.unity
     guid: 66037db811cb79c44a258145995a85b0
   - enabled: 1
     path: Assets/Scenes/Duel1Evasion.unity
     guid: 531e5d7e0693b91419c6b9ba42abcf2e
   - enabled: 1
-    path: Assets/Scenes/Edu1Martial.unity
+    path: Assets/Scenes/EditorOnly/Edu1Martial.unity
     guid: 9c9697a3330e28441a225807cd5c9957
   - enabled: 1
-    path: Assets/Scenes/Train1Martial.unity
+    path: Assets/Scenes/EditorOnly/Train1Martial.unity
     guid: c8f8a37fbe214f5428204b613ea26483
   - enabled: 1
     path: Assets/Scenes/Duel1Martial.unity
@@ -41,4 +38,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/TempScenes/Duel2MartialSvS.unity
     guid: 4ae2e203748a4e942be175b62944f4f9
+  - enabled: 1
+    path: Assets/Scenes/Nurturing.unity
+    guid: d9522f63c95b02e40a8c44f93b17adac
+  - enabled: 1
+    path: Assets/Scenes/Training.unity
+    guid: 789e2dcd9bb88be4b9ab6f7ac774ea0c
   m_configObjects: {}

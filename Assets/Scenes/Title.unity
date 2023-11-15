@@ -179,11 +179,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1161757245971913314, guid: 20b12e715a361d24aa65e9433348491c, type: 3}
       propertyPath: SceneName
-      value: Train1Martial
+      value: Training
       objectReference: {fileID: 0}
     - target: {fileID: 7271728143447965693, guid: 20b12e715a361d24aa65e9433348491c, type: 3}
       propertyPath: m_Text
-      value: "\uC218\uB828"
+      value: "\uC774\uC5B4\uC11C \uC218\uB828"
       objectReference: {fileID: 0}
     - target: {fileID: 7312586230556579889, guid: 20b12e715a361d24aa65e9433348491c, type: 3}
       propertyPath: m_Name
@@ -726,6 +726,71 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 7377020323565955715, guid: 20b12e715a361d24aa65e9433348491c, type: 3}
   m_PrefabInstance: {fileID: 104066798}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &662595746
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 662595748}
+  - component: {fileID: 662595747}
+  - component: {fileID: 662595749}
+  m_Layer: 0
+  m_Name: GameDataManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &662595747
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 662595746}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b81d792e9ff676f4da0d3aa25c316b4b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GameDataFileName: .json
+  _gameData:
+    currentModelStyle: 0
+    currentModelLevel: 0
+    statOFF: 0
+    statDFF: 0
+    statSPD: 0
+    name: 
+--- !u!4 &662595748
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 662595746}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &662595749
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 662595746}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1121a7cc5e3342f45bb3a6341347245b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &765670567
 GameObject:
   m_ObjectHideFlags: 0
@@ -930,7 +995,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1161757245971913314, guid: 20b12e715a361d24aa65e9433348491c, type: 3}
       propertyPath: SceneName
-      value: Edu1Martial
+      value: Nurturing
       objectReference: {fileID: 0}
     - target: {fileID: 7312586230556579889, guid: 20b12e715a361d24aa65e9433348491c, type: 3}
       propertyPath: m_Name
