@@ -29,6 +29,9 @@ public class NurturingUI : MonoBehaviour
         DataController.Instance.gameData.statSPD = 1;
         DataController.Instance.gameData.currentModelStyle = 0;
         DataController.Instance.gameData.currentModelLevel = 1;
+        DataController.Instance.gameData.turnElapsed = 0;
+        DataController.Instance.gameData.currentEXP = 0;
+
         DataController.Instance.SaveGameData();
     }
 

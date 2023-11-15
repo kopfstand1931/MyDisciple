@@ -376,7 +376,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1161757245971913314, guid: 20b12e715a361d24aa65e9433348491c, type: 3}
       propertyPath: SceneName
-      value: Duel2MartialMvM
+      value: BattleLobbyTray
       objectReference: {fileID: 0}
     - target: {fileID: 7271728143447965693, guid: 20b12e715a361d24aa65e9433348491c, type: 3}
       propertyPath: m_Text
