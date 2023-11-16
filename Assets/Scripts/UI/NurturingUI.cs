@@ -32,6 +32,15 @@ public class NurturingUI : MonoBehaviour
         DataController.Instance.gameData.turnElapsed = 0;
         DataController.Instance.gameData.currentEXP = 0;
 
+        for (int  i = 0; i < DataController.Instance.gameData.stageClear.Length; i++)
+        {
+            DataController.Instance.gameData.stageClear[i] = false;
+        }
+        for (int i = 0; i < DataController.Instance.gameData.eventOccured.Length; i++)
+        {
+            DataController.Instance.gameData.eventOccured[i] = false;
+        }
+
         DataController.Instance.SaveGameData();
     }
 
@@ -50,13 +59,13 @@ public class NurturingUI : MonoBehaviour
         switch (selected)
         {
             case 0:
-                DataController.Instance.gameData.statOFF += 1;
+                DataController.Instance.gameData.statOFF += 5;
                 break;
             case 1:
-                DataController.Instance.gameData.statDFF += 1;
+                DataController.Instance.gameData.statDFF += 5;
                 break;
             case 2:
-                DataController.Instance.gameData.statSPD += 1;
+                DataController.Instance.gameData.statSPD += 5;
                 break;
         }
 

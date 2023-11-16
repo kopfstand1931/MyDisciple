@@ -34,5 +34,12 @@ public class GameData
     // if Model Level is 1, needed EXP for Level Up is 2.
     // if Model Level is 2, needed EXP for Level Up is 4.
     public int currentEXP = 0;
-    
+
+
+    // From now, unders are for the stage clearing records.
+    // Stage Numbering starts with 1. So carefully use the index of the array.
+    public bool[] stageClear = new bool[3];
+
+    // Checking Occured Events
+    public bool[] eventOccured = new bool[1];
 }

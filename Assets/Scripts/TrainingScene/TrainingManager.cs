@@ -15,7 +15,7 @@ public class TrainingManager : MonoBehaviour
     [SerializeField] private Image fillSpd;
     [SerializeField] private Image fillMLevel;
 
-    private float time_loading = 3;
+    private float time_loading = 2;
     private float time_current;
     private float time_start;
     private bool isEnded = true;
@@ -119,17 +119,17 @@ public class TrainingManager : MonoBehaviour
         int randomNumber = Random.Range(0, 101);
 
         // Check the probability ranges and return the corresponding value
-        if (randomNumber <= 60)
+        if (randomNumber <= 75)
         {
-            return 1; // 60% chance for +1
+            return 1; // 75% chance for +1
         }
-        else if (randomNumber <= 90)
+        else if (randomNumber <= 95)
         {
-            return 2; // 30% chance for +2
+            return 2; // 20% chance for +2
         }
         else
         {
-            return 3; // 10% chance for +3
+            return 3; // 5% chance for +3
         }
     }
 
@@ -143,7 +143,7 @@ public class TrainingManager : MonoBehaviour
             yield return new WaitForSeconds(1.0f);
             sec++;
 
-            if (sec >= 3)
+            if (sec >= 2)
             {
                 int randomValue = GetRandomValue();
                 int temp_Off = DataController.Instance.gameData.statOFF;
@@ -169,7 +169,7 @@ public class TrainingManager : MonoBehaviour
             yield return new WaitForSeconds(1.0f);
             sec++;
 
-            if (sec >= 3)
+            if (sec >= 2)
             {
                 int randomValue = GetRandomValue();
                 int temp_Dff = DataController.Instance.gameData.statDFF;
@@ -195,7 +195,7 @@ public class TrainingManager : MonoBehaviour
             yield return new WaitForSeconds(1.0f);
             sec++;
 
-            if (sec >= 3)
+            if (sec >= 2)
             {
                 int randomValue = GetRandomValue();
                 int temp_Spd = DataController.Instance.gameData.statSPD;
@@ -221,7 +221,7 @@ public class TrainingManager : MonoBehaviour
             yield return new WaitForSeconds(1.0f);
             sec++;
 
-            if (sec >= 3)
+            if (sec >= 2)
             {
                 string temp_string = "";
 
@@ -317,7 +317,7 @@ public class TrainingManager : MonoBehaviour
             // update the mesh text ui.
             m_mesh.text = stringBuilder.ToString();
 
-            yield return new WaitForSeconds(0.05f);
+            yield return new WaitForSeconds(0.02f);
         }
     }
 
