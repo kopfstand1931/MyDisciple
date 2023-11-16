@@ -32,6 +32,9 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/TempScenes/Duel2MartialMvS.unity
     guid: 27d6dece34ba30b49a08e19f297c8f7b
+  - enabled: 0
+    path: Assets/Scenes/EditorOnly/Duel2MartialSvS.unity
+    guid: 4ae2e203748a4e942be175b62944f4f9
   - enabled: 1
     path: Assets/Scenes/Title.unity
     guid: 44c667d2cf7d4af43aa2f4de5d20803b
@@ -45,9 +48,6 @@ EditorBuildSettings:
     path: Assets/Scenes/BattleLobbyTray.unity
     guid: 8c9ebcb1d8c049b42a8fb9ef9ef119f7
   - enabled: 1
-    path: Assets/Scenes/Stages/Duel2MartialSvS.unity
-    guid: 4ae2e203748a4e942be175b62944f4f9
-  - enabled: 1
-    path: Assets/Scenes/Stages/1stageR1.unity
+    path: Assets/Scenes/Stages/1StageR1.unity
     guid: 75f490a8a21612c4a8bc0af15249f93f
   m_configObjects: {}

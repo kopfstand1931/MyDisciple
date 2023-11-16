@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class SoundEffectPlayer : MonoBehaviour
 {
-    // Start is called before the first frame update
-
     public AudioSource src;
     public AudioClip[] sfxs;
 
@@ -17,6 +15,12 @@ public class SoundEffectPlayer : MonoBehaviour
     public void PlaySfx2()
     {
         src.clip = sfxs[1];
+        src.Play();
+    }
+
+    public void PlaySfx3()
+    {
+        src.clip = sfxs[2];
         src.Play();
     }
 }

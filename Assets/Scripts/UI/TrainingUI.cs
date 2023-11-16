@@ -109,7 +109,7 @@ public class TrainingUI : MonoBehaviour
     public void OnClickTrainingEnd()
     {
         DataController.Instance.SaveGameData();
-        SceneManager.LoadScene("Title");
+        SceneManager.LoadScene("BattleLobbyTray");
     }
 
 

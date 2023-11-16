@@ -43,10 +43,15 @@ public class TrainingManager : MonoBehaviour
     [SerializeField] private TMPro.TextMeshProUGUI descriptionMLevel;
 
 
+    // for Sound Effects
+    [SerializeField] private SoundEffectPlayer m_soundEffectPlayer;
+
+
     void Start()
     {
         // fake loading reset
         Reset_Loading(currentFillUp);
+
     }
 
     void Update()
@@ -71,6 +76,8 @@ public class TrainingManager : MonoBehaviour
         currentFillUp = fillOff;
         Reset_Loading(currentFillUp);
 
+        m_soundEffectPlayer.PlaySfx1();
+
         StartCoroutine(CoroutineUpdateOff());
 
     }
@@ -83,6 +90,8 @@ public class TrainingManager : MonoBehaviour
 
         currentFillUp = fillDff;
         Reset_Loading(currentFillUp);
+
+        m_soundEffectPlayer.PlaySfx1();
 
         StartCoroutine(CoroutineUpdateDff());
 
@@ -97,6 +106,8 @@ public class TrainingManager : MonoBehaviour
         currentFillUp = fillSpd;
         Reset_Loading(currentFillUp);
 
+        m_soundEffectPlayer.PlaySfx1();
+
         StartCoroutine(CoroutineUpdateSpd());
 
     }
@@ -109,6 +120,8 @@ public class TrainingManager : MonoBehaviour
 
         currentFillUp = fillMLevel;
         Reset_Loading(currentFillUp);
+
+        m_soundEffectPlayer.PlaySfx1();
 
         StartCoroutine(CoroutineUpdateMLevel());
     }
@@ -151,6 +164,8 @@ public class TrainingManager : MonoBehaviour
                 DataController.Instance.gameData.turnElapsed += 1;
                 DataController.Instance.SaveGameData();
 
+                m_soundEffectPlayer.PlaySfx2();
+
                 titleOff.text = "공격력 훈련 완료!";
                 string temp_string = string.Format("기존 공: {0}\n변동량: <b><color=red>+{1}</color></b>\n현재 공: {2}", temp_Off, randomValue, DataController.Instance.gameData.statOFF);
                 StartCoroutine(TypeTextEffect(temp_string, descriptionOff));
@@ -177,6 +192,8 @@ public class TrainingManager : MonoBehaviour
                 DataController.Instance.gameData.turnElapsed += 1;
                 DataController.Instance.SaveGameData();
 
+                m_soundEffectPlayer.PlaySfx2();
+
                 titleDff.text = "방어력 훈련 완료!";
                 string temp_string = string.Format("기존 방: {0}\n변동량: <b><color=red>+{1}</color></b>\n현재 방: {2}", temp_Dff, randomValue, DataController.Instance.gameData.statDFF);
                 StartCoroutine(TypeTextEffect(temp_string, descriptionDff));
@@ -202,6 +219,8 @@ public class TrainingManager : MonoBehaviour
                 DataController.Instance.gameData.statSPD += randomValue;
                 DataController.Instance.gameData.turnElapsed += 1;
                 DataController.Instance.SaveGameData();
+
+                m_soundEffectPlayer.PlaySfx2();
 
                 titleSpd.text = "스피드 훈련 완료!";
                 string temp_string = string.Format("기존 속: {0}\n변동량: <b><color=red>+{1}</color></b>\n현재 속: {2}", temp_Spd, randomValue, DataController.Instance.gameData.statSPD);
@@ -234,6 +253,8 @@ public class TrainingManager : MonoBehaviour
                     DataController.Instance.gameData.currentModelLevel += 1;
                     DataController.Instance.SaveGameData();
 
+                    m_soundEffectPlayer.PlaySfx3();
+
                     titleMLevel.text = "숙련도 레벨 상승!";
                     temp_string = string.Format("축하합니다!\n숙련 경험치가 필요치에 도달하여, 숙련도가\n<b><color=red>'하급'</color></b>에서 <b><color=red>'중급'</color></b>으로 상승하였습니다!");
                     StartCoroutine(TypeTextEffect(temp_string, descriptionMLevel));
@@ -246,6 +267,8 @@ public class TrainingManager : MonoBehaviour
                     DataController.Instance.gameData.currentModelLevel += 1;
                     DataController.Instance.SaveGameData();
 
+                    m_soundEffectPlayer.PlaySfx3();
+
                     titleMLevel.text = "숙련도 <b><color=red>최대치 도달!</color></b>";
                     temp_string = string.Format("축하합니다!\n숙련 경험치가 필요치에 도달하여, 숙련도가\n<b><color=red>'중급'</color></b>에서 <b><color=red>'상급'</color></b>으로 상승하였습니다!");
                     StartCoroutine(TypeTextEffect(temp_string, descriptionMLevel));
@@ -255,6 +278,8 @@ public class TrainingManager : MonoBehaviour
                 else
                 {
                     DataController.Instance.SaveGameData();
+
+                    m_soundEffectPlayer.PlaySfx2();
 
                     titleMLevel.text = "정신 집중 완료!";
                     int temp_needed;

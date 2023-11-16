@@ -20,7 +20,7 @@ public class SceneExit : MonoBehaviour
                     Application.Quit();
                 #endif
             }
-            Academy.Instance.Dispose();
+            // Academy.Instance.Dispose();
 
             SceneManager.LoadScene("BattleLobbyTray");
         }

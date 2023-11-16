@@ -16,6 +16,10 @@ public class TrainEventManager : MonoBehaviour
     private bool[] nowOnEvent = new bool[1];  // the event which is now on
 
 
+    // for Sound Effects
+    [SerializeField] private SoundEffectPlayer m_soundEffectPlayer;
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -59,7 +63,7 @@ public class TrainEventManager : MonoBehaviour
 
     // Close Event UI
     public void TrainingEventConfirm()
-    { 
+    {
         m_EventConfirmButton.gameObject.SetActive(false);
         m_EventUI.SetActive(false);
     }
@@ -95,6 +99,9 @@ public class TrainEventManager : MonoBehaviour
 
     void TrainingEventOneEnd(int selected)
     {
+
+        m_soundEffectPlayer.PlaySfx3();
+
         if (selected == 1)
         {
             int randomNumber = Random.Range(0, 101);
