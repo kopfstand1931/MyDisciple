@@ -6,6 +6,8 @@ using UnityEngine;
 [Serializable]
 public class GameData
 {
+    // ¡Ø Initialization of Game Data is Occured in 'NurturingUI.cs' Script.
+
     // 'Style', 'Model' of Battle Model, and '3 Stats'
 
     // 'Style' is the personality of the Battle Model.
@@ -38,7 +40,7 @@ public class GameData
 
     // From now, unders are for the stage clearing records.
     // Stage Numbering starts with 1. So carefully use the index of the array.
-    public bool[] stageClear = new bool[3];
+    public bool[] stageClear = new bool[5];
 
     // Checking Occured Events
     public bool[] eventOccured = new bool[1];

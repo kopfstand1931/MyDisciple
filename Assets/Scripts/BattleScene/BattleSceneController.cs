@@ -57,6 +57,18 @@ public class BattleSceneController : MonoBehaviour
         {
             DataController.Instance.gameData.stageClear[2] = true;
         }
+        else if (sceneName.StartsWith("4"))
+        {
+            DataController.Instance.gameData.stageClear[3] = true;
+        }
+        else if (sceneName.StartsWith("5"))
+        {
+            DataController.Instance.gameData.stageClear[4] = true;
+        }
+        else
+        {
+            Debug.Log("Stage Number Error");
+        }
 
         DataController.Instance.SaveGameData();
     }

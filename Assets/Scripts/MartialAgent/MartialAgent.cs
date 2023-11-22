@@ -12,19 +12,25 @@ using UnityEngine.UI;
 
 public class MartialAgent : Agent
 {
+    // Ranged Cool Down Timer
+    private float rangedCoolDownTime = 0.5f;
+    private float rangedCoolDownTimer = 0f;
+    private bool isRangedCoolDown = false;
+
+
+    // Initial Dependency Settings
     [SerializeField] private Transform targetTransform;
     [SerializeField] private SpriteRenderer floorMeshRenderer;
 
     private BufferSensorComponent evasion_BufferSensor;
     
-    private SoundEffectPlayer m_soundEffectPlayer;
 
     private Rigidbody2D agent_Rigid2D;
     private SpriteRenderer agent_Renderer;
 
-    [SerializeField] private Image agentHPUIIMG;
+    
     [SerializeField] private TextMeshProUGUI agentHPUITMP;
-    [SerializeField] private int agent_maxHP = 13;
+    [SerializeField] private int agent_maxHP = 8;
     private int agent_currentHP;
 
     [SerializeField] private float moveSpeed = 5f;
@@ -105,7 +111,6 @@ public class MartialAgent : Agent
         agent_Renderer = GetComponentInChildren<SpriteRenderer>();
         m_GoalSensor = GetComponent<VectorSensorComponent>();
         m_animator = GetComponentInChildren<AnimationController>();
-        m_soundEffectPlayer = GetComponent<SoundEffectPlayer>();
 
         // 내 환경 내 모든 에이전트의 체력 초기화.
         MartialAgent _target;
@@ -134,6 +139,9 @@ public class MartialAgent : Agent
             // HitByMelee
             HitByMelee();
         }
+
+        // CoolDown Timer Update
+        CoolDownTimerUpdate();
 
         // Direction Check
         Vector3 dirToTarget = (targetTransform.localPosition - transform.localPosition).normalized;
@@ -221,10 +229,7 @@ public class MartialAgent : Agent
             bool isTryToAttack = actions.DiscreteActions[2] == 1;
             if (isTryToAttack)
             {
-                if (m_soundEffectPlayer is not null)
-                {
-                    m_soundEffectPlayer.PlaySfx1();
-                }
+                
                 nextAnimationState = 3;
                 MartialAgent _target;
                 if(_target = targetTransform.GetComponent<MartialAgent>())  // 현재 대전씬이고 타겟이 에이전트인 경우
@@ -250,12 +255,9 @@ public class MartialAgent : Agent
             if (_disToTarget > 12.25f)  // 거리가 3.5 이상일 시 투사공격
             {
                 bool isTryToShot = actions.DiscreteActions[3] == 1;
-                if (isTryToShot)
+                if (isTryToShot && !isRangedCoolDown)
                 {
-                    if (m_soundEffectPlayer is not null)
-                    {
-                        m_soundEffectPlayer.PlaySfx2();
-                    }
+                    
                     nextAnimationState = 4;
                     StartCoroutine("MakeTemporalInvincible");
                     
@@ -267,6 +269,12 @@ public class MartialAgent : Agent
                     newBullet.GetComponent<Rigidbody2D>().velocity = dirToTarget * bulletSpeed;
                     float angle = Mathf.Atan2(dirToTarget.y, dirToTarget.x) * Mathf.Rad2Deg;
                     newBullet.transform.rotation = Quaternion.Euler(0f, 0f, angle);
+
+                    // Successfully Shot Reward
+                    AddReward( ( +50f * (agent_currentHP / agent_maxHP) ) / MaxStep);
+
+                    // Start Cool Down Timer
+                    CoolDownTimerStart();
                 }
             }
         }
@@ -342,7 +350,7 @@ public class MartialAgent : Agent
         }
 
         discreteActions[2] = Input.GetKey(KeyCode.Space) ? 1 : 0;  // 공격 동작 입력
-        discreteActions[3] = Input.GetKey(KeyCode.V) ? 1 : 0;  // S키로 투사 공격
+        discreteActions[3] = Input.GetKey(KeyCode.V) ? 1 : 0;  // V키로 투사 공격
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -453,7 +461,6 @@ public class MartialAgent : Agent
     private void UpdateHPUI()
     {
         agentHPUITMP.text = $"{agent_currentHP} / {agent_maxHP}";
-        agentHPUIIMG.fillAmount = (float)agent_currentHP / (float)agent_maxHP;
     }
 
     private void AgentDie()  // Handling Death 
@@ -513,4 +520,23 @@ public class MartialAgent : Agent
         nextAnimationState = 2;
     }
 
+
+    // for check ranged cool down
+    private void CoolDownTimerUpdate()
+    {
+        if (isRangedCoolDown)
+        {
+            rangedCoolDownTimer -= Time.fixedDeltaTime;
+            if (rangedCoolDownTimer <= 0f)
+            {
+                isRangedCoolDown = false;
+            }
+        }
+    }
+
+    private void CoolDownTimerStart()
+    {
+        rangedCoolDownTimer = rangedCoolDownTime;
+        isRangedCoolDown = true;
+    }
 }

@@ -9,6 +9,7 @@ using System.Linq;
 using TMPro;
 using Unity.Barracuda;
 using UnityEngine.UI;
+using Unity.MLAgents.Policies;
 
 public class MartialAgentPlayer : Agent
 {
@@ -39,6 +40,12 @@ public class MartialAgentPlayer : Agent
     [SerializeField] public float meleeDamage = 2f;
     [SerializeField] public float rangeDamage = 1f;
     [SerializeField] private float defense = 0f;
+
+
+    // Ranged Cool Down Timer
+    private float rangedCoolDownTime = 0.5f;
+    private float rangedCoolDownTimer = 0f;
+    private bool isRangedCoolDown = false;
 
 
     // Initial Dependency Settings
@@ -167,6 +174,9 @@ public class MartialAgentPlayer : Agent
             _target.InitializeHP();
         */
         InitializeHP();  // 내 체력 초기화.
+
+        // Debug Check Current agent's TFModel name
+        Debug.Log(this.GetComponent<BehaviorParameters>().Model.name);
     }
 
     public void InitializeHP()
@@ -189,6 +199,9 @@ public class MartialAgentPlayer : Agent
             // HitByMelee
             HitByMelee();
         }
+
+        // Cool Down Timer Update
+        CoolDownTimerUpdate();
 
         // Direction Check
         Vector3 dirToTarget = (targetTransform.localPosition - transform.localPosition).normalized;
@@ -277,20 +290,28 @@ public class MartialAgentPlayer : Agent
             bool isTryToAttack = actions.DiscreteActions[2] == 1;
             if (isTryToAttack)
             {
-                if (m_soundEffectPlayer is not null)
-                {
-                    m_soundEffectPlayer.PlaySfx1();
-                }
-                nextAnimationState = 3;
+                
                 MartialAgentNPC _target;
-                if (_target = targetTransform.GetComponent<MartialAgentNPC>())  // 임시:현재 대전씬이고 타겟이 에이전트인 경우
+                if ((_target = targetTransform.GetComponent<MartialAgentNPC>()) && !isRangedCoolDown)  // 임시:현재 대전씬이고 타겟이 에이전트인 경우
                 {
+                    // Play Animation
+                    nextAnimationState = 3;
+
                     _target.IsHit = true;
                     AddReward(+0.3f);
+
+                    // Play Sound Effect
+                    if (m_soundEffectPlayer is not null)
+                    {
+                        m_soundEffectPlayer.PlaySfx1();
+                    }
+
+                    // Start Cool Down Timer
+                    CoolDownTimerStart();
                 }
                 else  // 현재 학습씬인 경우 
                 {
-                    AgentWin();
+                    // AgentWin();
                 }
 
             }
@@ -306,7 +327,7 @@ public class MartialAgentPlayer : Agent
             if (_disToTarget > 12.25f)  // 거리가 3.5 이상일 시 투사공격
             {
                 bool isTryToShot = actions.DiscreteActions[3] == 1;
-                if (isTryToShot)
+                if (isTryToShot && !isRangedCoolDown)
                 {
                     if (m_soundEffectPlayer is not null)
                     {
@@ -323,6 +344,9 @@ public class MartialAgentPlayer : Agent
                     newBullet.GetComponent<Rigidbody2D>().velocity = dirToTarget * bulletSpeed;
                     float angle = Mathf.Atan2(dirToTarget.y, dirToTarget.x) * Mathf.Rad2Deg;
                     newBullet.transform.rotation = Quaternion.Euler(0f, 0f, angle);
+
+                    // Start Cool Down Timer
+                    CoolDownTimerStart();
                 }
             }
         }
@@ -361,7 +385,7 @@ public class MartialAgentPlayer : Agent
 
         agent_Rigid2D.velocity = addForce * moveSpeed;
 
-        AddReward(-1f / MaxStep);  // accelerate decision speed
+        // AddReward(-1f / MaxStep);  // accelerate decision speed
     }
 
     public override void Heuristic(in ActionBuffers actionsOut)
@@ -585,5 +609,23 @@ public class MartialAgentPlayer : Agent
         Destroy(this);
     }
 
-    
+
+    // for check ranged cool down
+    private void CoolDownTimerUpdate()
+    {
+        if (isRangedCoolDown)
+        {
+            rangedCoolDownTimer -= Time.fixedDeltaTime;
+            if (rangedCoolDownTimer <= 0f)
+            {
+                isRangedCoolDown = false;
+            }
+        }
+    }
+
+    private void CoolDownTimerStart()
+    {
+        rangedCoolDownTimer = rangedCoolDownTime;
+        isRangedCoolDown = true;
+    }
 }

@@ -15,7 +15,7 @@ public class BattleLobyUI : MonoBehaviour
     [SerializeField] private TMPro.TextMeshProUGUI b_modelLevel;
 
     // for Stage Selection
-    [SerializeField] private Image[] stageButtons = new Image[3];
+    [SerializeField] private Image[] stageButtons = new Image[5];
 
 
     // Start is called before the first frame update
@@ -115,6 +115,7 @@ public class BattleLobyUI : MonoBehaviour
         else if (DataController.Instance.gameData.currentModelLevel == 3)
             stageName += "3";
 
+        Debug.Log(stageName);
         SceneManager.LoadScene(stageName);
     }
 }
