@@ -30,6 +30,7 @@ public class NurturingUI : MonoBehaviour
         DataController.Instance.gameData.currentModelStyle = 0;
         DataController.Instance.gameData.currentModelLevel = 1;
         DataController.Instance.gameData.turnElapsed = 0;
+        DataController.Instance.gameData.turnLimit = 12;
         DataController.Instance.gameData.currentEXP = 0;
 
         for (int  i = 0; i < DataController.Instance.gameData.stageClear.Length; i++)
@@ -39,6 +40,10 @@ public class NurturingUI : MonoBehaviour
         for (int i = 0; i < DataController.Instance.gameData.eventOccured.Length; i++)
         {
             DataController.Instance.gameData.eventOccured[i] = false;
+        }
+        for (int i = 0; i < DataController.Instance.gameData.isRewarded.Length; i++)
+        {
+            DataController.Instance.gameData.isRewarded[i] = false;
         }
 
         DataController.Instance.SaveGameData();

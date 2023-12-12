@@ -4164,11 +4164,15 @@ MonoBehaviour:
   m_EventUI: {fileID: 1471328655}
   m_EventTitle: {fileID: 1863504870}
   m_EventText: {fileID: 393572314}
+  m_EventImage: {fileID: 1374948319}
   m_EventOptions:
   - {fileID: 1359252268}
   - {fileID: 1247618889}
   m_EventConfirmButton: {fileID: 1876675432}
   m_soundEffectPlayer: {fileID: 1071837629}
+  m_eventImages:
+  - {fileID: 21300000, guid: 458b9c91a2c7f724bb585d0b234ea753, type: 3}
+  - {fileID: 21300000, guid: 7defee64f65ae9547b614d514ad7d67b, type: 3}
 --- !u!1 &1117326241
 GameObject:
   m_ObjectHideFlags: 0

@@ -31,6 +31,7 @@ public class GameData
     public string name;
     
     public int turnElapsed = 0;
+    public int turnLimit = 12;
 
     // 'EXP' is the experience for Model Level Up.
     // if Model Level is 1, needed EXP for Level Up is 2.
@@ -40,8 +41,10 @@ public class GameData
 
     // From now, unders are for the stage clearing records.
     // Stage Numbering starts with 1. So carefully use the index of the array.
-    public bool[] stageClear = new bool[5];
+    public bool[] stageClear = new bool[10];
+    // and, Increases the maximum number of turn limit for clearing a certain number of stages.
+    public bool[] isRewarded = new bool[2];
 
     // Checking Occured Events
-    public bool[] eventOccured = new bool[1];
+    public bool[] eventOccured = new bool[2];
 }

@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.TextCore.Text;
 using UnityEngine.UI;
 
 public class BattleLobyUI : MonoBehaviour
@@ -15,7 +17,20 @@ public class BattleLobyUI : MonoBehaviour
     [SerializeField] private TMPro.TextMeshProUGUI b_modelLevel;
 
     // for Stage Selection
-    [SerializeField] private Image[] stageButtons = new Image[5];
+    [SerializeField] private Image[] stageButtons = new Image[10];
+    [SerializeField] private GameObject worldOneStages;
+    [SerializeField] private GameObject worldTwoStages;
+
+    // for Stage BackGround
+    [SerializeField] private GameObject worldBG;
+    [SerializeField] private Sprite[] resourceWorldImages = new Sprite[2];
+
+    // for stage clear reward message
+    [SerializeField] private GameObject worldOneClearRewardMessage;
+    [SerializeField] private GameObject worldTwoClearRewardMessage;
+
+    // World Switching Buttons
+    [SerializeField] private GameObject worldSwitchingButton;
 
 
     // Start is called before the first frame update
@@ -67,6 +82,8 @@ public class BattleLobyUI : MonoBehaviour
         b_modelLevel.text = "¼÷·Ãµµ: " + temp_Level;
 
         UpdateStageClearUI();
+        CheckStageReward();
+        CheckWorldSwitching();
 
         // if key enter pressed, load title scene
         if (Input.GetKeyDown(KeyCode.Escape))
@@ -117,5 +134,66 @@ public class BattleLobyUI : MonoBehaviour
 
         Debug.Log(stageName);
         SceneManager.LoadScene(stageName);
+    }
+
+
+    public void CheckStageReward()
+    {
+        // Check the stage reward
+        // if the stage is cleared and the reward is not given, give the reward.
+        // if the stage is not cleared, do nothing.
+        // if the stage is cleared and the reward is given, do nothing.
+        DataController.Instance.LoadGameData();
+
+        // for world 1: from stage 1 to 5 is cleared and not rewarded
+        if (DataController.Instance.gameData.stageClear.Take(5).All(x => x) && !DataController.Instance.gameData.isRewarded[0])
+        {
+            DataController.Instance.gameData.isRewarded[0] = true;
+            DataController.Instance.gameData.turnLimit += 6;
+
+            worldOneClearRewardMessage.SetActive(true);
+        }
+
+        DataController.Instance.SaveGameData();
+    }
+
+
+    public void OnClearMessageConfirm()
+    {
+        worldOneClearRewardMessage.SetActive(false);
+        worldTwoClearRewardMessage.SetActive(false);
+
+        DataController.Instance.SaveGameData();
+        SceneManager.LoadScene("Training");
+    }
+
+
+    public void CheckWorldSwitching()
+    {
+        if (DataController.Instance.gameData.isRewarded[0])
+        {
+            worldSwitchingButton.SetActive(true);
+        }
+        else
+        {
+            worldSwitchingButton.SetActive(false);
+        }
+    }
+
+
+    public void OnClickWorldSwitch(int i)
+    {
+        if (i == 1)
+        {
+            worldOneStages.SetActive(true);
+            worldTwoStages.SetActive(false);
+            worldBG.GetComponent<SpriteRenderer>().sprite = resourceWorldImages[0];
+        }
+        else if (i == 2)
+        {
+            worldOneStages.SetActive(false);
+            worldTwoStages.SetActive(true);
+            worldBG.GetComponent<SpriteRenderer>().sprite = resourceWorldImages[1];
+        }
     }
 }

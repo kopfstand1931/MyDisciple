@@ -581,7 +581,27 @@ public class MartialAgentNPC : Agent
         // ³Ë¹é
         Vector3 dirToTarget = (targetTransform.localPosition - transform.localPosition).normalized;
         dirToTarget = -dirToTarget;
-        transform.localPosition += dirToTarget * 1.1f;
+        transform.localPosition += dirToTarget * 1.2f;
+
+        // Bound Check
+        if (transform.localPosition.x >= 10f)
+        {
+            transform.localPosition = new Vector3(9.9f, transform.localPosition.y, 0);
+        }
+        else if (transform.localPosition.x <= -10f)
+        {
+            transform.localPosition = new Vector3(-9.9f, transform.localPosition.y, 0);
+        }
+
+        if (transform.localPosition.y >= 10f)
+        {
+            transform.localPosition = new Vector3(transform.localPosition.x, 9.9f, 0);
+        }
+        else if (transform.localPosition.y <= -10f)
+        {
+            transform.localPosition = new Vector3(transform.localPosition.x, -9.9f, 0);
+        }
+
         nextAnimationState = 2;
     }
 

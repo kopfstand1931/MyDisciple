@@ -35,8 +35,8 @@ public class TrainingUI : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // if turn is 12, show training end message.
-        if (DataController.Instance.gameData.turnElapsed >= 12)
+        // if turn is over than limit(default = 12), show training end message.
+        if (DataController.Instance.gameData.turnElapsed >= DataController.Instance.gameData.turnLimit)
         {
             trainingEndMessage.SetActive(true);
         }
@@ -54,7 +54,7 @@ public class TrainingUI : MonoBehaviour
             trainingMLevelButton.SetActive(true);
         }
 
-        t_turnElapsed.text = DataController.Instance.gameData.turnElapsed.ToString() + "/12";
+        t_turnElapsed.text = DataController.Instance.gameData.turnElapsed.ToString() + "/" + DataController.Instance.gameData.turnLimit.ToString();
         t_name.text = "이름: " + DataController.Instance.gameData.name;
         t_statOFF.text = "공: " + DataController.Instance.gameData.statOFF.ToString();
         t_statDFF.text = "방: " + DataController.Instance.gameData.statDFF.ToString();

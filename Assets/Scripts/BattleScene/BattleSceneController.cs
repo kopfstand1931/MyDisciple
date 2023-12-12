@@ -28,6 +28,7 @@ public class BattleSceneController : MonoBehaviour
     // Method to be called when the event is raised
     private void HandleWinMessageRaised()
     {
+        Time.timeScale = 1f;
         winMessage.SetActive(true);
         martialAgentPlayer.StopAgent();
         ClearedStageUpdate();
@@ -36,6 +37,7 @@ public class BattleSceneController : MonoBehaviour
 
     private void HandleLoseMessageRaised()
     {
+        Time.timeScale = 1f;
         loseMessage.SetActive(true);
         martialAgentNPC.StopAgent();
     }
@@ -64,6 +66,26 @@ public class BattleSceneController : MonoBehaviour
         else if (sceneName.StartsWith("5"))
         {
             DataController.Instance.gameData.stageClear[4] = true;
+        }
+        else if (sceneName.StartsWith("6"))
+        {
+            DataController.Instance.gameData.stageClear[5] = true;
+        }
+        else if (sceneName.StartsWith("7"))
+        {
+            DataController.Instance.gameData.stageClear[6] = true;
+        }
+        else if (sceneName.StartsWith("8"))
+        {
+            DataController.Instance.gameData.stageClear[7] = true;
+        }
+        else if (sceneName.StartsWith("9"))
+        {
+            DataController.Instance.gameData.stageClear[8] = true;
+        }
+        else if (sceneName.StartsWith("10"))
+        {
+            DataController.Instance.gameData.stageClear[9] = true;
         }
         else
         {
